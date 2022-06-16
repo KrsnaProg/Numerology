@@ -1,4 +1,4 @@
-package hare.krshna.numerology.parsers.jsonParcer
+package hare.krshna.numerology.parsers.jsonReader
 
 import androidx.annotation.RawRes
 

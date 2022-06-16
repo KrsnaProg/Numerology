@@ -6,46 +6,41 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import hare.krshna.numerology.R
 import hare.krshna.numerology.databinding.FragmentTextInputBinding
-import hare.krshna.numerology.numerology.NumerologyImpl
-import hare.krshna.numerology.parsers.jsonParce.jsonParceImpl
-import hare.krshna.numerology.parsers.jsonParcer.RawJsonReaderImpl
+import hare.krshna.numerology.numerology.Numerology
+import org.koin.android.ext.android.inject
 
 
 class TextInputFragment : Fragment() {
-    private lateinit var binding: FragmentTextInputBinding
+  private lateinit var binding: FragmentTextInputBinding
 
+  private val numerology by inject<Numerology>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentTextInputBinding.inflate(inflater, container, false)
-        return binding.root
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View {
+    binding = FragmentTextInputBinding.inflate(inflater, container, false)
+    return binding.root
+  }
+
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    binding.btnConfirm.setOnClickListener {
+      showToast(binding.etName.text.toString())
     }
+  }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val rawJsonReader = RawJsonReaderImpl(resources)
-        val jsonStr = rawJsonReader.readJson(R.raw.numerological_chars_mapping)
-        val numerologicalValuesDict = jsonParceImpl()
-        binding.btnConfirm.setOnClickListener {
-            val name = binding.etName.text.toString()
-            val numerologyDetector = NumerologyImpl(numerologicalValuesDict.parceJson(jsonStr))
+  private fun showToast(name: String) {
+    Toast.makeText(
+      requireContext(),
+      numerology.computeValue(name).toString(),
+      Toast.LENGTH_LONG
+    ).show()
+  }
 
-            Toast.makeText(
-                requireContext(),
-                numerologyDetector.computeValue(name).toString(),
-                Toast.LENGTH_LONG
-            )
-                .show()
-        }
-    }
-
-    companion object {
-        const val TAG = "TextInputFragmentTAG"
-    }
-
+  companion object {
+    const val TAG = "TextInputFragmentTAG"
+  }
 }
