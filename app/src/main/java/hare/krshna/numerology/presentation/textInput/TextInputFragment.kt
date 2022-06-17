@@ -1,20 +1,18 @@
-package hare.krshna.numerology.fragments
+package hare.krshna.numerology.presentation.textInput
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import hare.krshna.numerology.databinding.FragmentTextInputBinding
-import hare.krshna.numerology.numerology.Numerology
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class TextInputFragment : Fragment() {
   private lateinit var binding: FragmentTextInputBinding
 
-  private val numerology by inject<Numerology>()
+  private val viewModel by viewModel<TextInputViewModel>()
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -27,17 +25,22 @@ class TextInputFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+    subscribeLiveData()
     binding.btnConfirm.setOnClickListener {
-      showToast(binding.etName.text.toString())
+      viewModel.onTextInputIntent(binding.etName.text.toString())
     }
   }
 
-  private fun showToast(name: String) {
-    Toast.makeText(
-      requireContext(),
-      numerology.computeValue(name).toString(),
-      Toast.LENGTH_LONG
-    ).show()
+  private fun subscribeLiveData() {
+    viewModel.statesLiveData.observe(viewLifecycleOwner) {
+      if (it.showResult != null) {
+        showResult(it.showResult)
+      }
+    }
+  }
+
+  private fun showResult(result: String) {
+    binding.tvResult.text = result
   }
 
   companion object {
