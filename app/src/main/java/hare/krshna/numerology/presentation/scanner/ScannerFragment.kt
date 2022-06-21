@@ -1,4 +1,4 @@
-package hare.krshna.numerology.fragments
+package hare.krshna.numerology.presentation.scanner
 
 import android.os.Bundle
 import android.view.LayoutInflater
