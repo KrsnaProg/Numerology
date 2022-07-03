@@ -35,10 +35,22 @@
       android:adjustViewBounds="true"
       android:src="@drawable/selector_camera"
       app:layout_constraintBottom_toBottomOf="@id/vMenuHolder"
-      app:layout_constraintEnd_toEndOf="@id/vMenuHolder"
+      app:layout_constraintEnd_toStartOf="@id/ivSearchHistory"
       app:layout_constraintStart_toEndOf="@id/ivText"
       app:layout_constraintTop_toTopOf="@id/vMenuHolder"
       app:layout_constraintWidth_percent="0.09" />
+
+  <androidx.appcompat.widget.AppCompatImageView
+      android:id="@+id/ivSearchHistory"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:adjustViewBounds="true"
+      android:src="@drawable/selectori_search_history"
+      app:layout_constraintBottom_toBottomOf="@id/vMenuHolder"
+      app:layout_constraintEnd_toEndOf="@id/vMenuHolder"
+      app:layout_constraintStart_toEndOf="@id/ivScanner"
+      app:layout_constraintTop_toTopOf="@id/vMenuHolder"
+      app:layout_constraintWidth_percent="0.10" />
 
   <FrameLayout
       android:id="@+id/flDynamicFrame"

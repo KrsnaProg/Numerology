@@ -1,49 +1,48 @@
 package hare.krshna.numerology.presentation.textInput
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import com.zuluft.api.controllers.fragments.BaseFragment
 import hare.krshna.numerology.databinding.FragmentTextInputBinding
+import hare.krshna.numerology.presentation.searchHistory.SearchHistoryFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class TextInputFragment : Fragment() {
-  private lateinit var binding: FragmentTextInputBinding
+class TextInputFragment : BaseFragment<TextInputViewState, TextInputViewModel>() {
+    private lateinit var binding: FragmentTextInputBinding
+    private val viewModel by viewModel<TextInputViewModel>()
 
-  private val viewModel by viewModel<TextInputViewModel>()
-
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View {
-    binding = FragmentTextInputBinding.inflate(inflater, container, false)
-    return binding.root
-  }
-
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-    subscribeLiveData()
-    binding.btnConfirm.setOnClickListener {
-      viewModel.onTextInputIntent(binding.etName.text.toString())
+    override fun prepareView() {
+        binding.btnConfirm.setOnClickListener {
+            viewModel.onConfirmClicked(binding.etName.text.toString())
+        }
     }
-  }
 
-  private fun subscribeLiveData() {
-    viewModel.statesLiveData.observe(viewLifecycleOwner) {
-      if (it.showResult != null) {
-        showResult(it.showResult)
-      }
+    override fun reflectState(state: TextInputViewState) {
+        if (state.showResult != null) {
+            showResult(state.showResult)
+        }
     }
-  }
 
-  private fun showResult(result: String) {
-    binding.tvResult.text = result
-  }
+    override fun provideViewModel(): TextInputViewModel {
+        return viewModel
+    }
 
-  companion object {
-    const val TAG = "TextInputFragmentTAG"
-  }
+    override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
+        binding = FragmentTextInputBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    companion object {
+        const val TAG = "SearchHistoryFragmentTAG"
+        fun newInstance(): SearchHistoryFragment {
+            return SearchHistoryFragment()
+        }
+    }
+
+    private fun showResult(result: String) {
+        binding.tvResult.text = result
+    }
+
 }

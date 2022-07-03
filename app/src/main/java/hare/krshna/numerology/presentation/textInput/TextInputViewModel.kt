@@ -1,18 +1,64 @@
 package hare.krshna.numerology.presentation.textInput
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.zuluft.api.viewModels.BaseViewModel
+import hare.krshna.numerology.domain.models.SearchHistoryModel
+import hare.krshna.numerology.domain.useCases.CashSearchHistoryUseCase
 import hare.krshna.numerology.numerology.Numerology
+import io.reactivex.schedulers.Schedulers
 
 class TextInputViewModel(
-  private val numerology: Numerology
-) : ViewModel() {
+    private val numerology: Numerology,
+    private val cashSearchHistoryUseCase: CashSearchHistoryUseCase
+) : BaseViewModel<TextInputViewState>() {
 
-  val statesLiveData: MutableLiveData<TextInputViewState> = MutableLiveData()
+    fun onConfirmClicked(text: String) {
+        onGetNumericalImageIntent(text)
+    }
 
-  fun onTextInputIntent(text: String) {
-    val result = numerology.computeValue(text)
-    val targetState = TextInputViewState(showResult = result.toString())
-    statesLiveData.postValue(targetState)
-  }
+    private fun onGetBasicValueIntent(text: String) {
+        val result = numerology.computeValue(text)
+        setState(
+            constructState {
+                copy(showResult = result.toString())
+            }
+        )
+    }
+
+    private fun onGetHiddenValueIntent(text: String) {
+        val result = numerology.computeHiddenValue(text)
+        setState(
+            constructState {
+                copy(showResult = result.toString())
+            }
+        )
+    }
+
+    private fun onGetRidOfFirstLetterIntent(text: String) {
+        val result = numerology.getRidOfFirstLetterComputeValue(text)
+        setState(
+            constructState {
+                copy(showResult = result.toString())
+            }
+        )
+    }
+
+    private fun onGetNumericalImageIntent(text: String) {
+        val result = numerology.getNumericalImage(text)
+        setState(
+            constructState {
+                copy(showResult = result)
+            }
+        )
+        cashCurrentSearch(result, text)
+    }
+
+    private fun cashCurrentSearch(result: String, text: String) {
+        val s = SearchHistoryModel(textNumber = result, text = text)
+        cashSearchHistoryUseCase.invoke(s).subscribeOn(Schedulers.io()).subscribe()
+    }
+
+    override fun getInitialState(): TextInputViewState {
+        return TextInputViewState()
+    }
+
 }
